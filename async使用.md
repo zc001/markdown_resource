@@ -179,6 +179,48 @@ async的API大体分为三类：
 	
 更多详细的例子可以看 [https://github.com/zc001/async_example/blob/master/waterfall.js](https://github.com/zc001/async_example/blob/master/waterfall.js)	
 
+### 集合控制类
 
+#### forEach
+
+##### 语法
+	
+	each(arr, iterator, callback)
+	
+##### 描述
+
+对集合arr中的每一个元素，都执行iterator操作，且是并行，所有iterator执行完毕后，最后的callback就会调用。每一个iterator操作完成后，都会调用一个回调，该回调接收一个参数，表示iterator操作过程中产生的错误信息。任何一个iterator向它的回调中传递了一个错误信息，最后的callback就会立即执行，而不需要等待所以的
+iterator都执行完毕。该方法只关心iterator执行的过程，忽略产生的结果。
+
+##### 参数
+
+* arr: 数据集合
+
+* iterator(item, callback): 对arr中每个元素执行的操作，item是arr中的一个元素。callback(error)是iterator执行完毕后的回调，error为该回调接收的错误信息，可为null。
+
+* callback(err): 当所有iterator执行完毕，或者有iterator给自己的回调传递错误信息时被调用，err就是iterator传递的错误信息。
+
+##### 例子
+	
+	var async = require('async')
+	,	array = [{name: 'zc', time_delay: 1000}, {name: 'async', time_delay: 2000}];
+	
+	async.forEach(array, function (item, callback) {
+		console.log('start iterator. item: ', item);
+		setTimeout(function () {
+			console.log('show name: ', item.name);
+			callback(null);
+		}, item.time_delay);
+	}, function (error) {
+		console.log('error: ', error);
+	});
+	
+	//打印信息如下
+	start iterator. item:  { name: 'zc', time_delay: 2000 }
+	start iterator. item:  { name: 'async', time_delay: 1000 }
+	show name:  async
+	show name:  zc
+	error:  undefined
+	
 
 
