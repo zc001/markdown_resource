@@ -118,12 +118,11 @@ async的API大体分为三类：
 	finial results:  [ 3000, 2000 ]
 	
 更多详细的例子可以看 [https://github.com/zc001/async_example/blob/master/parallel.js](https://github.com/zc001/async_example/blob/master/parallel.js)	
-
-#### parallelLimit
-
-##### 语法
+##### 扩展
 
 	parallelLimit(tasks, limit, [callback])
+
+这个方法就是parallel的一个扩展，唯一的不同就在于使用limit限制了并发的任务数量。	
 
 #### waterfall
 	
@@ -292,5 +291,10 @@ iterator都执行完毕。该方法只关心iterator执行的过程，忽略产�
 	show name:  zc
 	error:  undefined
 	
+##### 扩展
+
+	forEachLimit(arr, limit, iterator, callback)
+	
+这个方法是forEach的一个扩展，使用limit限制了并发执行任务的个数，在处理大量任务的时候，推荐使用。	
 
 
