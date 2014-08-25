@@ -177,7 +177,77 @@ async的API大体分为三类：
 	finial error:  null
 	finial results:  2000
 	
-更多详细的例子可以看 [https://github.com/zc001/async_example/blob/master/waterfall.js](https://github.com/zc001/async_example/blob/master/waterfall.js)	
+更多详细的例子可以看 [https://github.com/zc001/async_example/blob/master/waterfall.js](https://github.com/zc001/async_example/blob/master/waterfall.js)
+
+#### auto
+
+#### 语法
+
+	auto(tasks, [callback])
+	
+#### 描述
+
+根据tasks字典中任务的依赖关系，执行任务。对于tasks中的每个任务，我们都可以给他指定一个依赖数组，只有当这个数组中的任务都执行完毕，该task才会执行，也可以不指定这个依赖数组。所有没有被指定依赖数组的任务，都是并行执行。
+
+tasks中任何一个任务向它的回调中传递了一个error，那么依赖它的任务将不会执行，并且最后的[callback]会马上触发。
+
+#### 参数
+
+* tasks: 一个包含所有要执行任务的字典，字典的每个元素都是一个函数，或者一个包含依赖任务名以及本任务的数组，数组的最后一个元素就是要执行的任务，之前的元素都是被依赖任务的名称。每一个任务执行后都需要有一个回调callback（error, result_1, … ,result_n）,error接收该任务执行过程中传递的错误信息，之后为操作结果，可为1个，也可为多个
+
+* callback(error, results): 所有任务执行完毕后的回调， error接收错误信息，results为操作结果字典。
+
+#### 例子
+
+	var async = require('async');
+
+	function commonAPI (error, time_delay, callback) {
+    	setTimeout(function () {
+        	console.log('延时 %d 的操作完成， 错误是： %s', time_delay, String(error));
+        	callback(error, time_delay, time_delay + 1);
+    	});
+	}
+	
+	async.auto({
+        one: function(callback){
+            console.log('one start');
+            commonAPI(null, 1000, callback);
+        },
+        two: function(callback){
+            console.log('two start');
+            commonAPI(null, 2000, callback);
+        },
+        three: ['one', 'two', function(callback, results){
+            console.log('three start and the results: ', results);
+            commonAPI(null, 3000, callback);
+        }],
+        four: function(callback){
+            console.log('four start');
+            commonAPI(null, 4000, callback);
+        }
+    }, function(err, results) {
+        console.log('final error: ', err);
+        console.log('final results: ', results);
+    });
+    
+    //打印信息如下
+    one start
+	two start
+	four start
+	延时 1000 的操作完成， 错误是： null
+	延时 2000 的操作完成， 错误是： null
+	延时 4000 的操作完成， 错误是： null
+	three start and the results:  { one: [ 1000, 1001 ],
+  	two: [ 2000, 2001 ],
+ 	 four: [ 4000, 4001 ] }
+	延时 3000 的操作完成， 错误是： null
+	final error:  null
+	final results:  { one: [ 1000, 1001 ],
+  	two: [ 2000, 2001 ],
+  	four: [ 4000, 4001 ],
+  	three: [ 3000, 3001 ] }
+
+更多详细的例子可以看 [https://github.com/zc001/async_example/blob/master/auto.js](https://github.com/zc001/async_example/blob/master/auto.js)
 
 ### 集合控制类
 
