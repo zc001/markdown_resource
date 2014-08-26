@@ -254,7 +254,7 @@ tasks中任何一个任务向它的回调中传递了一个error，那么依赖�
 
 ##### 语法
 	
-	each(arr, iterator, callback)
+	forEach(arr, iterator, callback)
 	
 ##### 描述
 
@@ -296,5 +296,9 @@ iterator都执行完毕。该方法只关心iterator执行的过程，忽略产�
 	forEachLimit(arr, limit, iterator, callback)
 	
 这个方法是forEach的一个扩展，使用limit限制了并发执行任务的个数，在处理大量任务的时候，推荐使用。	
+
+	 forEachSeries(arr, iterator, callback)
+
+这个是串行的方法。	 
 
 
